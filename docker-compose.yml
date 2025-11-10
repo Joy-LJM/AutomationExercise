@@ -22,7 +22,7 @@ services:
     # Start ngrok tunnel and point it to Jenkins
     command: http jenkins:8080
     environment:
-      - NGROK_AUTHTOKEN=35FbWYrNAgLoAx5yoMyGZ1i0oX3_X1uKrQ66W6mp9RBUYnjt
+      - NGROK_AUTHTOKEN=xxx
     networks:
       - jenkins-net
 
