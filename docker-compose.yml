@@ -1,18 +1,18 @@
 version: '3.8'
 services:
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
     container_name: jenkins
     user: root
     ports:
       - "8080:8080"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock # Allow Jenkins to run Docker commands
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - jenkins-net
-    entrypoint: >
-      bash -c " apt-get update && apt-get install -y docker.io && /sbin/tini -- /usr/local/bin/jenkins.sh "
 
   ngrok:
     image: ngrok/ngrok:latest
@@ -21,8 +21,8 @@ services:
       - jenkins
     # Start ngrok tunnel and point it to Jenkins
     command: http jenkins:8080
-    # environment:
-    #   - NGROK_AUTHTOKEN=xxx
+    environment:
+      - NGROK_AUTHTOKEN=35FbWYrNAgLoAx5yoMyGZ1i0oX3_X1uKrQ66W6mp9RBUYnjt
     networks:
       - jenkins-net
 
