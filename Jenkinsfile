@@ -12,8 +12,8 @@ pipeline{
         git branch: 'main', url:'https://github.com/Joy-LJM/AutomationExercise.git'
       }
     }
-    stages {
-        stage('Build and Test') {
+   
+      stage('Build and Test') {
             steps {
                 echo 'Checking files in workspace...'
                 sh 'ls -R'   // 👈 Add this line
@@ -23,7 +23,6 @@ pipeline{
                 '''
             }
         }
-    }
     stage('Run Jmeter Test'){
       steps{
         script{
