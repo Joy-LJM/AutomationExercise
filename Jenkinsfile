@@ -16,13 +16,10 @@ pipeline {
           echo 'Checking files in workspace...'
           sh 'ls -la tests/'
           
-          // Debug: Check what Docker sees
+          // Debug: Check what Docker sees using a different image
           sh '''
-            echo "=== Host system ==="
-            pwd
-            ls -la tests/
             echo "=== Inside Docker container ==="
-            docker run --rm -v $WORKSPACE/tests:/tests justb4/jmeter ls -la /tests/
+            docker run --rm -v $WORKSPACE/tests:/tests alpine ls -la /tests/
           '''
           
           sh """
