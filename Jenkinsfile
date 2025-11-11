@@ -1,48 +1,44 @@
-pipeline{
+pipeline {
   agent any
   triggers {
-        githubPush()  // Triggered automatically by GitHub webhook
-    }
-  environment {
-        JMETER_HOME = "/usr/share/jmeter"
+    githubPush()  // Triggered automatically by GitHub webhook
   }
-  stages{
-    stage('Checkout'){
-      steps{
+  stages {
+    stage('Checkout') {
+      steps {
         git branch: 'main', url:'https://github.com/Joy-LJM/AutomationExercise.git'
       }
     }
-   
-    stage('Run Jmeter Test'){
-      steps{
-        script{
+
+    stage('Run Jmeter Test') {
+      steps {
+        script {
           echo 'Checking files in workspace...'
-          sh 'ls -R'   // 👈 Add this line
+          sh 'ls -R'
           sh '''
             docker run --rm \
               -v $PWD/tests:/tests \
               justb4/jmeter \
-              -n -t ./tests/AutomationExercise_Test_Script.jmx \
-              -l /tests/result.jtl -e -o /tests/report
+              -n -t /tests/AutomationExercise_Test_Script.jmx \
+              -l /tests/result.jtl \
+              -e -o /tests/report
           '''
-
         }
       }
     }
 
-    stage('Archive Results'){
+    stage('Archive Results') {
       steps {
-                archiveArtifacts artifacts: 'report/**', allowEmptyArchive: true
-                publishHTML(target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'report',
-                    reportFiles: 'index.html',
-                    reportName: 'JMeter Report'
-                ])
-            }
+        archiveArtifacts artifacts: 'tests/report/**', allowEmptyArchive: true
+        publishHTML(target: [
+          allowMissing: false,
+          alwaysLinkToLastBuild: true,
+          keepAll: true,
+          reportDir: 'tests/report',
+          reportFiles: 'index.html',
+          reportName: 'JMeter Report'
+        ])
+      }
     }
   }
 }
-
