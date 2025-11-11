@@ -16,7 +16,7 @@ pipeline {
       steps {
         script {
           sh '''
-            docker run --rm -v $PWD/tests:/tests jmeter-runner:latest \
+            docker run --rm -v ${WORKSPACE}/tests:/tests jmeter-runner:latest \
               -n -t /tests/AutomationExercise_Test_Script.jmx \
               -l /tests/result.jtl \
               -e -o /tests/report
