@@ -18,10 +18,10 @@ pipeline {
             echo "Files in tests directory:"
             ls -la $WORKSPACE/tests/
             
-            # Use official Apache JMeter image
+             # Try different JMeter images
             docker run --rm \
               -v "$WORKSPACE/tests:/tests" \
-              apache/jmeter:5.6.2 \
+              justb4/jmeter:latest \
               -n -t /tests/AutomationExercise_Test_Script.jmx \
               -l /tests/result.jtl \
               -e -o /tests/report
