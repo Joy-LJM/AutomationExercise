@@ -13,19 +13,11 @@ pipeline{
       }
     }
    
-      stage('Build and Test') {
-            steps {
-                echo 'Checking files in workspace...'
-                sh 'ls -R'   // 👈 Add this line
-                sh '''
-                    jmeter -n -t tests/AutomationExercise_Test_Script.jmx \
-                    -l tests/result.jtl -e -o tests/report
-                '''
-            }
-        }
     stage('Run Jmeter Test'){
       steps{
         script{
+          echo 'Checking files in workspace...'
+          sh 'ls -R'   // 👈 Add this line
           sh '''
             docker run --rm \
               -v $PWD/tests:/tests \
@@ -37,6 +29,7 @@ pipeline{
         }
       }
     }
+
     stage('Archive Results'){
       steps {
                 archiveArtifacts artifacts: 'report/**', allowEmptyArchive: true
