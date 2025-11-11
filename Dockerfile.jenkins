@@ -2,10 +2,13 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Install Docker CLI and utilities
+# Install Docker CLI and Git
 RUN apt-get update && apt-get install -y docker.io git && apt-get clean
 
-# Allow Jenkins to run docker commands
+# Allow Jenkins to access Docker
 RUN usermod -aG docker jenkins
+
+# Fix volume permissions
+RUN mkdir -p /var/jenkins_home && chown -R jenkins:jenkins /var/jenkins_home
 
 USER jenkins
