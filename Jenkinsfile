@@ -16,13 +16,23 @@ pipeline {
       steps {
         script {
           sh '''
-            # Verify test file exists
+            # Verify test file exists in Jenkins workspace
+            echo "Checking for JMeter test file in workspace..."
             if [ ! -f "${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx" ]; then
               echo "Error: JMeter test file not found at ${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx"
+              ls -la "${WORKSPACE}/tests/"
               exit 1
             fi
             
-            # Run JMeter test
+            echo "Test file found. Listing test directory contents:"
+            ls -la "${WORKSPACE}/tests/"
+            
+            # Debug: Check what's actually in the mounted directory inside container
+            echo "Debug: Testing Docker volume mapping..."
+            docker run --rm -v ${WORKSPACE}/tests:/test-mount alpine:latest ls -la /test-mount/
+            
+            # Run JMeter test with full path
+            echo "Running JMeter test..."
             docker run --rm -v ${WORKSPACE}/tests:/tests jmeter-runner:latest \
               -n -t /tests/AutomationExercise_Test_Script.jmx \
               -l /tests/result.jtl \
