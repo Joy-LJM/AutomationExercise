@@ -15,14 +15,14 @@ pipeline {
         script {
           echo 'Checking files in workspace...'
           sh 'ls -R'
-          sh '''
+          sh """
             docker run --rm \
-              -v $PWD/tests:/tests \
+              -v ${env.WORKSPACE}/tests:/tests \
               justb4/jmeter \
               -n -t /tests/AutomationExercise_Test_Script.jmx \
               -l /tests/result.jtl \
               -e -o /tests/report
-          '''
+          """
         }
       }
     }
