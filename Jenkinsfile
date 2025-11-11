@@ -14,10 +14,16 @@ pipeline {
       steps {
         script {
           echo 'Checking files in workspace...'
-          sh 'ls -R'
+          sh 'ls -la tests/'
           
-          // Verify the test file exists
-          sh 'test -f tests/AutomationExercise_Test_Script.jmx || (echo "JMX file not found" && exit 1)'
+          // Debug: Check what Docker sees
+          sh '''
+            echo "=== Host system ==="
+            pwd
+            ls -la tests/
+            echo "=== Inside Docker container ==="
+            docker run --rm -v $WORKSPACE/tests:/tests justb4/jmeter ls -la /tests/
+          '''
           
           sh """
             docker run --rm \
