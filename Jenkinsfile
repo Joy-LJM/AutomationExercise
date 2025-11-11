@@ -18,14 +18,10 @@ pipeline {
             echo "Files in tests directory:"
             ls -la $WORKSPACE/tests/
             
-            # Pre-create the report directory with proper permissions
-            mkdir -p tests/report
-            chmod 755 tests/report
-
-            # Use absolute path with proper escaping
+            # Use official Apache JMeter image
             docker run --rm \
               -v "$WORKSPACE/tests:/tests" \
-              justb4/jmeter \
+              apache/jmeter:5.6.2 \
               -n -t /tests/AutomationExercise_Test_Script.jmx \
               -l /tests/result.jtl \
               -e -o /tests/report
