@@ -10,25 +10,26 @@ pipeline {
       }
     }
 
-stage('Run Jmeter Test') {
-  steps {
-    script {
-      echo 'Checking files in workspace...'
-      sh 'ls -R'
-      dir('tests') {
-        sh '''
-          docker run --rm \
-            -v $PWD:/tests \
-            justb4/jmeter \
-            -n -t /tests/AutomationExercise_Test_Script.jmx \
-            -l /tests/result.jtl \
-            -e -o /tests/report
-        '''
+    stage('Run Jmeter Test') {
+      steps {
+        script {
+          echo 'Checking files in workspace...'
+          sh 'ls -R'
+          
+          // Verify the test file exists
+          sh 'test -f tests/AutomationExercise_Test_Script.jmx || (echo "JMX file not found" && exit 1)'
+          
+          sh """
+            docker run --rm \
+              -v ${env.WORKSPACE}/tests:/tests \
+              justb4/jmeter \
+              -n -t /tests/AutomationExercise_Test_Script.jmx \
+              -l /tests/result.jtl \
+              -e -o /tests/report
+          """
+        }
       }
     }
-  }
-}
-
     stage('Archive Results') {
       steps {
         archiveArtifacts artifacts: 'tests/report/**', allowEmptyArchive: true
