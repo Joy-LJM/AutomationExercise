@@ -14,6 +14,9 @@ pipeline {
       steps {
         script {
           sh '''
+            # Ensure wget and tar exist
+            apt-get update && apt-get install -y wget tar
+            
             # Download JMeter if not exists
             if [ ! -d "apache-jmeter-5.6.2" ]; then
               echo "Downloading JMeter..."
@@ -21,17 +24,11 @@ pipeline {
               tar -xzf apache-jmeter-5.6.2.tgz
               rm apache-jmeter-5.6.2.tgz
             fi
-            
-            # Create report directory
+
             mkdir -p tests/report
-            
-            # Run JMeter test
+
             echo "Starting JMeter test..."
             ./apache-jmeter-5.6.2/bin/jmeter -n -t tests/AutomationExercise_Test_Script.jmx -l tests/result.jtl -e -o tests/report
-            
-            echo "JMeter test completed successfully!"
-            echo "Generated files:"
-            ls -la tests/report/
           '''
         }
       }
