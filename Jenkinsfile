@@ -13,23 +13,19 @@ pipeline {
     stage('Run Jmeter Test') {
       steps {
         script {
-          echo 'Checking files in workspace...'
-          sh 'ls -la tests/'
-          
-          // Debug: Check what Docker sees using a different image
           sh '''
-            echo "=== Inside Docker container ==="
-            docker run --rm -v $WORKSPACE/tests:/tests alpine ls -la /tests/
-          '''
-          
-          sh """
+            echo "Current workspace: $WORKSPACE"
+            echo "Files in tests directory:"
+            ls -la $WORKSPACE/tests/
+            
+            # Use absolute path with proper escaping
             docker run --rm \
-              -v ${env.WORKSPACE}/tests:/tests \
+              -v "$WORKSPACE/tests:/tests:ro" \
               justb4/jmeter \
               -n -t /tests/AutomationExercise_Test_Script.jmx \
               -l /tests/result.jtl \
               -e -o /tests/report
-          """
+          '''
         }
       }
     }
