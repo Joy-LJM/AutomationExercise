@@ -18,9 +18,13 @@ pipeline {
             echo "Files in tests directory:"
             ls -la $WORKSPACE/tests/
             
+            # Pre-create the report directory with proper permissions
+            mkdir -p tests/report
+            chmod 755 tests/report
+
             # Use absolute path with proper escaping
             docker run --rm \
-              -v "$WORKSPACE/tests:/tests:ro" \
+              -v "$WORKSPACE/tests:/tests" \
               justb4/jmeter \
               -n -t /tests/AutomationExercise_Test_Script.jmx \
               -l /tests/result.jtl \
