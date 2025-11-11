@@ -2,10 +2,10 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Install Docker CLI inside the Jenkins image
-RUN apt-get update && apt-get install -y docker.io && apt-get clean
+# Install Docker CLI and utilities
+RUN apt-get update && apt-get install -y docker.io git && apt-get clean
 
-# Allow the Jenkins user to access Docker socket
+# Allow Jenkins to run docker commands
 RUN usermod -aG docker jenkins
 
 USER jenkins
