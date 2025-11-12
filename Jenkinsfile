@@ -24,19 +24,20 @@ pipeline {
               exit 1
             fi
             
-            echo "Test file found. Listing test directory contents:"
-            ls -la "${WORKSPACE}/tests/"
+            # Fix permissions before running test
+            echo "Fixing file permissions..."
+            chown -R jenkins:jenkins "${WORKSPACE}/tests/"
+            chmod -R 755 "${WORKSPACE}/tests/"
             
-            # Debug: Check what's actually in the mounted directory inside container
-            echo "Debug: Testing Docker volume mapping..."
-            docker run --rm -v ${WORKSPACE}/tests:/test-mount alpine:latest ls -la /test-mount/
-            
-            # Run JMeter test with full path
-            echo "Running JMeter test..."
-            docker run --rm -v ${WORKSPACE}/tests:/tests jmeter-runner:latest \
-              -n -t /tests/AutomationExercise_Test_Script.jmx \
-              -l /tests/result.jtl \
-              -e -o /tests/report
+            # Run JMeter test with user and group mapping
+            echo "Running JMeter test with explicit user mapping..."
+            docker run --rm \
+              -v ${WORKSPACE}/tests:/tests \
+              -u $(id -u jenkins):$(id -g jenkins) \
+              jmeter-runner:latest \
+                -n -t /tests/AutomationExercise_Test_Script.jmx \
+                -l /tests/result.jtl \
+                -e -o /tests/report
             
             # Verify report was generated
             if [ ! -d "${WORKSPACE}/tests/report" ]; then
