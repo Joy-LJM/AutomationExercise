@@ -9,18 +9,11 @@ RUN apk add --no-cache openjdk17 wget tar bash && \
 ENV JMETER_HOME /opt/jmeter
 ENV PATH $JMETER_HOME/bin:$PATH
 
-# Create a non-root user for JMeter
-RUN adduser -D -u 1000 jmeteruser
-
-# Set working directory with proper permissions
+# Set working directory
 WORKDIR /tests
-RUN chown jmeteruser:jmeteruser /tests
 
-# Switch to non-root user
-USER jmeteruser
-
-# Use tests directory as temp directory (already has proper permissions)
-ENV JMETER_TEMP /tests/temp
+# Create temp subdirectory with proper permissions
+RUN mkdir -p /tests/temp && chmod 777 /tests/temp
 
 # Disable file logging and use console output only
 ENTRYPOINT ["jmeter", "-j", "-", "-L", "INFO"]

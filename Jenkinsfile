@@ -24,16 +24,19 @@ pipeline {
               exit 1
             fi
             
-            # Fix permissions before running test
-            echo "Fixing file permissions..."
-            chown -R jenkins:jenkins "${WORKSPACE}/tests/"
-            chmod -R 755 "${WORKSPACE}/tests/"
+            # Ensure proper permissions on mounted volume
+            echo "Setting up permissions for mounted volume..."
+            chmod -R 777 "${WORKSPACE}/tests/"
             
-            # Run JMeter test with user and group mapping
-            echo "Running JMeter test with explicit user mapping..."
+            # Create report directory before running JMeter
+            echo "Creating report directory..."
+            mkdir -p "${WORKSPACE}/tests/report"
+            chmod 777 "${WORKSPACE}/tests/report"
+            
+            # Run JMeter test
+            echo "Running JMeter test..."
             docker run --rm \
               -v ${WORKSPACE}/tests:/tests \
-              -u $(id -u jenkins):$(id -g jenkins) \
               jmeter-runner:latest \
                 -n -t /tests/AutomationExercise_Test_Script.jmx \
                 -l /tests/result.jtl \
