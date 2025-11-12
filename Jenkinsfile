@@ -26,7 +26,8 @@ pipeline {
           sh '''
             # Debug: Show everything in workspace
             echo "=== WORKSPACE CONTENTS ==="
-            find ${WORKSPACE} -type f \( -name "*.jmx" -o -name "*.csv" \) 2>/dev/null || echo "No test files found in workspace"
+            find ${WORKSPACE} -type f -name "*.jmx" 2>/dev/null || echo "No jmx files found in workspace"
+            find ${WORKSPACE} -type f -name "*.csv" 2>/dev/null || echo "No csv files found in workspace"
             
             echo ""
             echo "=== JENKINS WORKSPACE DIR ==="
