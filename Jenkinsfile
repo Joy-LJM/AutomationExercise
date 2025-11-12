@@ -40,10 +40,16 @@ pipeline {
             mkdir -p "${WORKSPACE}/tests/report"
             chmod 777 "${WORKSPACE}/tests/report"
             
-            # Run JMeter test
+            # Create temp directory for JMeter with proper permissions
+            echo "Creating temp directory for JMeter..."
+            mkdir -p "${WORKSPACE}/tests/temp"
+            chmod 777 "${WORKSPACE}/tests/temp"
+            
+            # Run JMeter test with explicit temp directory
             echo "Running JMeter test..."
             docker run --rm \
               -v ${WORKSPACE}/tests:/tests \
+              -e JMETER_TEMP=/tests/temp \
               jmeter-runner:latest \
                 -n -t /tests/AutomationExercise_Test_Script.jmx \
                 -l /tests/result.jtl \
