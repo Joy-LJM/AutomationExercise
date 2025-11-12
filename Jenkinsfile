@@ -42,6 +42,10 @@ pipeline {
             mkdir -p "${WORKSPACE}/tests/temp"
             chmod 777 "${WORKSPACE}/tests/temp"
             
+            # Debug: List files in mounted volume before running JMeter
+            echo "Files in the mounted volume directory:"
+            docker run --rm -v ${WORKSPACE}/tests:/tests alpine:latest ls -la /tests/
+            
             # Run JMeter test with explicit temp directory
             echo "Running JMeter test..."
             docker run --rm \
