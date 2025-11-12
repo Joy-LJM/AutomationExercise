@@ -18,9 +18,16 @@ pipeline {
           sh '''
             # Verify test file exists in Jenkins workspace
             echo "Checking for JMeter test file in workspace..."
+            echo "Workspace contents:"
+            ls -la "${WORKSPACE}/"
+            echo ""
+            echo "Tests directory contents:"
+            ls -la "${WORKSPACE}/tests/" || echo "Tests directory does not exist!"
+            echo ""
+            
             if [ ! -f "${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx" ]; then
               echo "Error: JMeter test file not found at ${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx"
-              ls -la "${WORKSPACE}/tests/"
+              echo "This file must be committed to the Git repository."
               exit 1
             fi
             
