@@ -16,11 +16,24 @@ pipeline {
       steps {
         script {
           sh '''
+            # Debug: Show everything in workspace
+            echo "=== WORKSPACE CONTENTS ==="
+            find ${WORKSPACE} -type f -name "*.jmx" -o -name "*.csv" | head -20
+            
+            echo ""
+            echo "=== JENKINS HOME CONTENTS ==="
+            ls -la /var/jenkins_home/workspace/
+            
+            echo ""
+            echo "=== WORKSPACE/TESTS CONTENTS ==="
+            ls -la "${WORKSPACE}/tests/" 2>/dev/null || echo "tests directory not found!"
+            
             # Verify test file exists in Jenkins workspace
+            echo ""
             echo "Checking for JMeter test file in workspace..."
             
             if [ ! -f "${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx" ]; then
-              echo "Error: JMeter test file not found at ${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx"
+              echo "ERROR: JMeter test file NOT found at ${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx"
               exit 1
             fi
             
