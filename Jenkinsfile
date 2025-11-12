@@ -58,34 +58,22 @@ pipeline {
             echo ""
             echo "Test file found. Proceeding with JMeter test..."
             
-            # Build or rebuild the JMeter Docker image
-            echo "Building JMeter Docker image..."
+            # Build or rebuild the JMeter Docker image (includes test files from workspace)
+            echo "Building JMeter Docker image with test files..."
             docker build -f ${WORKSPACE}/Dockerfile.jmeter -t jmeter-runner:latest ${WORKSPACE}
             
-            # Ensure proper permissions on host files
-            echo "Setting up permissions..."
-            chmod -R 777 "${WORKSPACE}/tests/"
+            # Ensure output directory exists on host for report collection
+            mkdir -p "${WORKSPACE}/tests/report"
+            chmod -R 777 "${WORKSPACE}/tests/report"
             
-            # Create report and temp directories  
-            mkdir -p "${WORKSPACE}/tests/report" "${WORKSPACE}/tests/temp"
-            chmod -R 777 "${WORKSPACE}/tests/report" "${WORKSPACE}/tests/temp"
-            
-            # Run JMeter with properly mounted volume using --mount syntax
+            # Run JMeter - test files are already in the image via COPY directives in Dockerfile
             echo "Running JMeter test..."
             docker run --rm \
-              --mount type=bind,source=${WORKSPACE}/tests,target=/tests \
-              --entrypoint sh \
-              -e JMETER_TEMP=/tests/temp \
+              -v ${WORKSPACE}/tests/report:/tests/report \
               jmeter-runner:latest \
-              -c "
-                echo 'Files in /tests:'
-                ls -la /tests/
-                echo ''
-                echo 'Running JMeter...'
-                cd /tests
-                mkdir -p report temp
-                jmeter -j - -L INFO -n -t AutomationExercise_Test_Script.jmx -l result.jtl -e -o report
-              "
+                -n -t /tests/AutomationExercise_Test_Script.jmx \
+                -l /tests/result.jtl \
+                -e -o /tests/report
             
             # Verify report was generated
             if [ ! -d "${WORKSPACE}/tests/report" ]; then

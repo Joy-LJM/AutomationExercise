@@ -9,9 +9,15 @@ RUN apk add --no-cache openjdk17 wget tar bash && \
 ENV JMETER_HOME=/opt/jmeter
 ENV PATH=$JMETER_HOME/bin:$PATH
 
-# Set working directory - this is where JMeter will look for relative paths
+# Set working directory
 WORKDIR /tests
 
+# Copy test files from build context into the image
+COPY tests/AutomationExercise_Test_Script.jmx /tests/
+COPY tests/test_data.csv /tests/
+
+# Create directories for reports and temp files
+RUN mkdir -p /tests/report /tests/temp && chmod 777 /tests/report /tests/temp
+
 # Disable file logging and use console output only
-# Run as root to access host-mounted files without permission issues
-ENTRYPOINT ["/bin/bash", "-c", "jmeter -j - -L INFO \"$@\"", "--"]
+ENTRYPOINT ["jmeter", "-j", "-", "-L", "INFO"]
