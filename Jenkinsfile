@@ -14,7 +14,14 @@ pipeline {
         sh '''
           echo "=== Git checkout complete ===" 
           ls -la ${WORKSPACE}/tests/ || echo "tests directory not found!"
-          git lfs install || true
+          
+          # Fix Git LFS installation issue
+          if ! command -v git-lfs &> /dev/null; then
+            echo "Git LFS not found, installing..."
+            curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+            apt-get install -y git-lfs
+          fi
+          git lfs install --skip-smudge || true
           git lfs pull || true
         '''
       }
@@ -78,11 +85,25 @@ pipeline {
             touch "${WORKSPACE}/tests/result.jtl"
             chmod 666 "${WORKSPACE}/tests/result.jtl"
 
+            # Add timeout to prevent hanging
+            TIMEOUT=300  # 5 minutes timeout
             docker run --rm \
+              -v ${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx:/tests/AutomationExercise_Test_Script.jmx \
+              -v ${WORKSPACE}/tests/test_data.csv:/tests/test_data.csv \
               -v ${WORKSPACE}/tests/result.jtl:/tests/result.jtl \
               jmeter-runner:latest \
                 -n -t /tests/AutomationExercise_Test_Script.jmx \
-                -l /tests/result.jtl
+                -l /tests/result.jtl \
+                -Jtest_data_path=/tests/test_data.csv || {
+                  echo "JMeter test failed or timed out after $TIMEOUT seconds"
+                  exit 1
+                }
+
+            # Check if result file was created
+            if [ ! -s "${WORKSPACE}/tests/result.jtl" ]; then
+              echo "Error: No data written to result.jtl file"
+              exit 1
+            fi
 
             # Now generate the HTML dashboard from the persisted JTL into the (empty) host report dir
             echo "Generating HTML dashboard from result.jtl..."
