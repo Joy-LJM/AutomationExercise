@@ -68,14 +68,33 @@ pipeline {
             mkdir -p "${WORKSPACE}/tests/report"
             chmod -R 777 "${WORKSPACE}/tests/report"
             
-            # Run JMeter - test files are already in the image via COPY directives in Dockerfile
-            echo "Running JMeter test..."
+            # Run JMeter in two steps to avoid HtmlTemplateExporter 'folder not empty' error:
+            # 1) execute the test and persist the raw results (result.jtl) to the host
+            # 2) generate the HTML dashboard from the persisted result.jtl into an empty report folder
+            echo "Running JMeter test (produce result.jtl) and persist to host..."
+            # Ensure previous result file is removed and host file exists for bind mount
+            rm -f "${WORKSPACE}/tests/result.jtl" || true
+            mkdir -p "${WORKSPACE}/tests"
+            touch "${WORKSPACE}/tests/result.jtl"
+            chmod 666 "${WORKSPACE}/tests/result.jtl"
+
             docker run --rm \
-              -v ${WORKSPACE}/tests/report:/tests/report \
+              -v ${WORKSPACE}/tests/result.jtl:/tests/result.jtl \
               jmeter-runner:latest \
                 -n -t /tests/AutomationExercise_Test_Script.jmx \
-                -l /tests/result.jtl \
-                -e -o /tests/report
+                -l /tests/result.jtl
+
+            # Now generate the HTML dashboard from the persisted JTL into the (empty) host report dir
+            echo "Generating HTML dashboard from result.jtl..."
+            rm -rf "${WORKSPACE}/tests/report" || true
+            mkdir -p "${WORKSPACE}/tests/report"
+            chmod -R 777 "${WORKSPACE}/tests/report"
+
+            docker run --rm \
+              -v ${WORKSPACE}/tests/result.jtl:/tests/result.jtl \
+              -v ${WORKSPACE}/tests/report:/tests/report \
+              jmeter-runner:latest \
+                -g /tests/result.jtl -o /tests/report
             
             # Verify report was generated
             if [ ! -d "${WORKSPACE}/tests/report" ]; then
