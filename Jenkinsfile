@@ -9,6 +9,14 @@ pipeline {
     stage('Checkout') {
       steps {
         git branch: 'main', url: 'https://github.com/Joy-LJM/AutomationExercise.git'
+        
+        // Ensure tests directory files are present
+        sh '''
+          echo "=== Git checkout complete ===" 
+          ls -la ${WORKSPACE}/tests/ || echo "tests directory not found!"
+          git lfs install || true
+          git lfs pull || true
+        '''
       }
     }
 
@@ -18,24 +26,36 @@ pipeline {
           sh '''
             # Debug: Show everything in workspace
             echo "=== WORKSPACE CONTENTS ==="
-            find ${WORKSPACE} -type f -name "*.jmx" -o -name "*.csv" | head -20
+            find ${WORKSPACE} -type f \( -name "*.jmx" -o -name "*.csv" \) 2>/dev/null || echo "No test files found in workspace"
             
             echo ""
-            echo "=== JENKINS HOME CONTENTS ==="
-            ls -la /var/jenkins_home/workspace/
+            echo "=== JENKINS WORKSPACE DIR ==="
+            ls -la "${WORKSPACE}/" | head -15
             
             echo ""
-            echo "=== WORKSPACE/TESTS CONTENTS ==="
-            ls -la "${WORKSPACE}/tests/" 2>/dev/null || echo "tests directory not found!"
-            
-            # Verify test file exists in Jenkins workspace
-            echo ""
-            echo "Checking for JMeter test file in workspace..."
-            
-            if [ ! -f "${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx" ]; then
-              echo "ERROR: JMeter test file NOT found at ${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx"
+            echo "=== TESTS DIRECTORY ==="
+            if [ -d "${WORKSPACE}/tests" ]; then
+              ls -la "${WORKSPACE}/tests/"
+            else
+              echo "ERROR: tests directory does not exist!"
               exit 1
             fi
+            
+            # Check if test files exist - if not, error out clearly
+            if [ ! -f "${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx" ]; then
+              echo ""
+              echo "======================================"
+              echo "ERROR: Test file missing!"
+              echo "======================================"
+              echo "The file AutomationExercise_Test_Script.jmx was not checked out from Git."
+              echo "This likely indicates a Git checkout or workspace issue."
+              echo "Workspace location: ${WORKSPACE}"
+              echo "Expected file: ${WORKSPACE}/tests/AutomationExercise_Test_Script.jmx"
+              exit 1
+            fi
+            
+            echo ""
+            echo "Test file found. Proceeding with JMeter test..."
             
             # Build or rebuild the JMeter Docker image
             echo "Building JMeter Docker image..."
