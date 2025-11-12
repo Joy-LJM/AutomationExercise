@@ -9,19 +9,9 @@ RUN apk add --no-cache openjdk17 wget tar bash && \
 ENV JMETER_HOME /opt/jmeter
 ENV PATH $JMETER_HOME/bin:$PATH
 
-# Create jmeter user that can access mounted volumes
-RUN adduser -D -u 1000 jmeter
-RUN chmod 755 /tests 2>/dev/null || true
-
-# Set working directory
+# Set working directory - this is where JMeter will look for relative paths
 WORKDIR /tests
 
-# Set environment for JMeter temp directory
-ENV JMETER_TEMP=/tests/temp
-
-# Run as root so we can access files mounted from Jenkins (owned by root)
-# This is acceptable since the container is ephemeral and only runs tests
-USER root
-
 # Disable file logging and use console output only
+# Run as root to access host-mounted files without permission issues
 ENTRYPOINT ["jmeter", "-j", "-", "-L", "INFO"]
