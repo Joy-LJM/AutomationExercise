@@ -70,32 +70,21 @@ pipeline {
             mkdir -p "${WORKSPACE}/tests/report" "${WORKSPACE}/tests/temp"
             chmod -R 777 "${WORKSPACE}/tests/report" "${WORKSPACE}/tests/temp"
             
-            # Run JMeter using --mount syntax which works better with Docker-in-Docker
-            # Create a temporary script to run inside the container
-            cat > /tmp/run_jmeter.sh << 'EOF'
-#!/bin/bash
-cd /tests
-mkdir -p report temp
-jmeter -j - -L INFO \
-  -n -t AutomationExercise_Test_Script.jmx \
-  -l result.jtl \
-  -e -o report
-EOF
-            chmod +x /tmp/run_jmeter.sh
-            
+            # Run JMeter with properly mounted volume using --mount syntax
             echo "Running JMeter test..."
             docker run --rm \
               --mount type=bind,source=${WORKSPACE}/tests,target=/tests \
+              --entrypoint sh \
               -e JMETER_TEMP=/tests/temp \
               jmeter-runner:latest \
-              /bin/bash -c "
+              -c "
+                echo 'Files in /tests:'
                 ls -la /tests/
+                echo ''
+                echo 'Running JMeter...'
                 cd /tests
                 mkdir -p report temp
-                jmeter -j - -L INFO \
-                  -n -t AutomationExercise_Test_Script.jmx \
-                  -l result.jtl \
-                  -e -o report
+                jmeter -j - -L INFO -n -t AutomationExercise_Test_Script.jmx -l result.jtl -e -o report
               "
             
             # Verify report was generated
