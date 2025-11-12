@@ -63,6 +63,8 @@ pipeline {
             docker build -f ${WORKSPACE}/Dockerfile.jmeter -t jmeter-runner:latest ${WORKSPACE}
             
             # Ensure output directory exists on host for report collection
+            # Clean any previous report contents so JMeter can copy the report template into an empty folder
+            rm -rf "${WORKSPACE}/tests/report"/* || true
             mkdir -p "${WORKSPACE}/tests/report"
             chmod -R 777 "${WORKSPACE}/tests/report"
             
