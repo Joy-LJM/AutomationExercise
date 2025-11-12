@@ -62,33 +62,41 @@ pipeline {
             echo "Building JMeter Docker image..."
             docker build -f ${WORKSPACE}/Dockerfile.jmeter -t jmeter-runner:latest ${WORKSPACE}
             
-            # Ensure proper permissions on mounted volume
-            echo "Setting up permissions for mounted volume..."
+            # Ensure proper permissions on host files
+            echo "Setting up permissions..."
             chmod -R 777 "${WORKSPACE}/tests/"
             
-            # Create report directory before running JMeter
-            echo "Creating report directory..."
-            mkdir -p "${WORKSPACE}/tests/report"
-            chmod 777 "${WORKSPACE}/tests/report"
+            # Create report and temp directories  
+            mkdir -p "${WORKSPACE}/tests/report" "${WORKSPACE}/tests/temp"
+            chmod -R 777 "${WORKSPACE}/tests/report" "${WORKSPACE}/tests/temp"
             
-            # Create temp directory for JMeter with proper permissions
-            echo "Creating temp directory for JMeter..."
-            mkdir -p "${WORKSPACE}/tests/temp"
-            chmod 777 "${WORKSPACE}/tests/temp"
+            # Run JMeter using --mount syntax which works better with Docker-in-Docker
+            # Create a temporary script to run inside the container
+            cat > /tmp/run_jmeter.sh << 'EOF'
+#!/bin/bash
+cd /tests
+mkdir -p report temp
+jmeter -j - -L INFO \
+  -n -t AutomationExercise_Test_Script.jmx \
+  -l result.jtl \
+  -e -o report
+EOF
+            chmod +x /tmp/run_jmeter.sh
             
-            # Debug: List files in mounted volume before running JMeter
-            echo "Files in the mounted volume directory:"
-            docker run --rm -v ${WORKSPACE}/tests:/tests alpine:latest ls -la /tests/
-            
-            # Run JMeter test with explicit temp directory
             echo "Running JMeter test..."
             docker run --rm \
-              -v ${WORKSPACE}/tests:/tests \
+              --mount type=bind,source=${WORKSPACE}/tests,target=/tests \
               -e JMETER_TEMP=/tests/temp \
               jmeter-runner:latest \
-                -n -t /tests/AutomationExercise_Test_Script.jmx \
-                -l /tests/result.jtl \
-                -e -o /tests/report
+              /bin/bash -c "
+                ls -la /tests/
+                cd /tests
+                mkdir -p report temp
+                jmeter -j - -L INFO \
+                  -n -t AutomationExercise_Test_Script.jmx \
+                  -l result.jtl \
+                  -e -o report
+              "
             
             # Verify report was generated
             if [ ! -d "${WORKSPACE}/tests/report" ]; then
