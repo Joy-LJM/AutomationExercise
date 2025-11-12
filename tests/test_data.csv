@@ -1,0 +1,4 @@
+product_id,product_name,email,password
+1,Blue Top,test@example.com,password123
+2,Men Tshirt,user2@example.com,testpass
+3,Sleeveless Dress,user3@example.com,mypassword
