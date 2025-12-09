@@ -1,0 +1,27 @@
+{
+  "id": "automationexercise-env",
+  "name": "AutomationExercise Environment",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "https://automationexercise.com/api",
+      "enabled": true
+    },
+    {
+      "key": "email",
+      "value": "test@example.com",
+      "enabled": true
+    },
+    {
+      "key": "password",
+      "value": "password123",
+      "enabled": true
+    },
+    {
+      "key": "product_id",
+      "value": "1",
+      "enabled": true
+    }
+  ],
+  "type": "environment"
+}
