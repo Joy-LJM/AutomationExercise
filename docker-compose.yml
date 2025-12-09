@@ -1,34 +1,53 @@
-version: '3.8'
+version: "3.9"
+
 services:
+  jmeter:
+    image: justb4/jmeter:latest
+    container_name: jmeter-runner
+    volumes:
+      - ./jmeter/tests:/tests
+      - ./jmeter/data:/data
+      - ./reports/jmeter:/reports
+    entrypoint: ["./jmeter/tests/run_jmeter.sh"]
+
+  newman:
+    image: postman/newman:alpine
+    container_name: newman_runner
+    volumes:
+      - ./postman:/etc/newman
+      - ./reports/newman:/etc/newman/reports
+    entrypoint: ["newman"]
+    command:
+      [
+        "run",
+        "AutomationExercise.postman_collection.json",
+        "-e",
+        "AutomationExercise_environment.json",
+        "-r",
+        "cli,html",
+        "--reporter-html-export",
+        "reports/newman/newman-report.html"
+      ]
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.45.0-jammy
+    container_name: playwright-runner
+    volumes:
+      - ./ui/playwright:/tests
+      - ./reports/playwright-report:/report
+    entrypoint: ["./ui/playwright/tests/run_playwright.sh"]
+
   jenkins:
     build:
       context: .
       dockerfile: Dockerfile.jenkins
-    container_name: jenkins
-    user: root
+    container_name: jenkins-server
     ports:
       - "8080:8080"
+      - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - jenkins-net
-
-  ngrok:
-    image: ngrok/ngrok:latest
-    container_name: ngrok
-    depends_on:
-      - jenkins
-    # Start ngrok tunnel and point it to Jenkins
-    command: http jenkins:8080
-    environment:
-      - NGROK_AUTHTOKEN=xxx
-    networks:
-      - jenkins-net
-
-networks:
-  jenkins-net:
-
 
 volumes:
   jenkins_home:
