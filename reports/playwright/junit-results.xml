@@ -1,0 +1,218 @@
+<testsuites id="" name="" tests="8" failures="6" skipped="0" errors="0" time="32.803466">
+<testsuite name="login.spec.ts" timestamp="2025-12-17T22:01:30.556Z" hostname="chromium" tests="8" failures="6" skipped="0" time="224.436" errors="0">
+<testcase name="AutomationExercise E-Commerce Tests › Should navigate to home page" classname="login.spec.ts" time="21.334">
+</testcase>
+<testcase name="AutomationExercise E-Commerce Tests › Should display all products on products page" classname="login.spec.ts" time="21.329">
+</testcase>
+<testcase name="AutomationExercise E-Commerce Tests › Should add product to cart successfully" classname="login.spec.ts" time="30.308">
+<failure message="login.spec.ts:19:7 Should add product to cart successfully" type="FAILURE">
+<![CDATA[  [chromium] › login.spec.ts:19:7 › AutomationExercise E-Commerce Tests › Should add product to cart successfully 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.single-products').first().locator('a[href*="add_to_cart"]')
+
+
+      23 |     // Click on first product's add to cart button
+      24 |     const firstProduct = page.locator('.single-products').first();
+    > 25 |     await firstProduct.locator('a[href*="add_to_cart"]').click();
+         |                                                          ^
+      26 |     
+      27 |     // Verify success message or cart badge
+      28 |     const successMsg = page.locator("text=Added To Cart").first();
+        at D:\ziliao\learn\Jenkins\Test\AutomationExercise\ui\playwright\tests\login.spec.ts:25:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\login-AutomationExercise-E-70004-roduct-to-cart-successfully-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\login-AutomationExercise-E-70004-roduct-to-cart-successfully-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-70004-roduct-to-cart-successfully-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-70004-roduct-to-cart-successfully-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AutomationExercise E-Commerce Tests › Should view shopping cart with items" classname="login.spec.ts" time="30.284">
+<failure message="login.spec.ts:32:7 Should view shopping cart with items" type="FAILURE">
+<![CDATA[  [chromium] › login.spec.ts:32:7 › AutomationExercise E-Commerce Tests › Should view shopping cart with items 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.single-products').first().locator('a[href*="add_to_cart"]')
+
+
+      35 |     // Add product to cart
+      36 |     const firstProduct = page.locator('.single-products').first();
+    > 37 |     await firstProduct.locator('a[href*="add_to_cart"]').click();
+         |                                                          ^
+      38 |     
+      39 |     // Navigate to cart
+      40 |     await page.goto("/view_cart");
+        at D:\ziliao\learn\Jenkins\Test\AutomationExercise\ui\playwright\tests\login.spec.ts:37:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\login-AutomationExercise-E-f168a-ew-shopping-cart-with-items-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\login-AutomationExercise-E-f168a-ew-shopping-cart-with-items-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-f168a-ew-shopping-cart-with-items-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-f168a-ew-shopping-cart-with-items-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AutomationExercise E-Commerce Tests › Should proceed to checkout" classname="login.spec.ts" time="30.29">
+<failure message="login.spec.ts:48:7 Should proceed to checkout" type="FAILURE">
+<![CDATA[  [chromium] › login.spec.ts:48:7 › AutomationExercise E-Commerce Tests › Should proceed to checkout 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.single-products').first().locator('a[href*="add_to_cart"]')
+
+
+      51 |     // Add product
+      52 |     const firstProduct = page.locator('.single-products').first();
+    > 53 |     await firstProduct.locator('a[href*="add_to_cart"]').click();
+         |                                                          ^
+      54 |     
+      55 |     // Go to cart
+      56 |     await page.goto("/view_cart");
+        at D:\ziliao\learn\Jenkins\Test\AutomationExercise\ui\playwright\tests\login.spec.ts:53:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\login-AutomationExercise-E-c0835--Should-proceed-to-checkout-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\login-AutomationExercise-E-c0835--Should-proceed-to-checkout-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-c0835--Should-proceed-to-checkout-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-c0835--Should-proceed-to-checkout-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AutomationExercise E-Commerce Tests › Should navigate through product search" classname="login.spec.ts" time="30.283">
+<failure message="login.spec.ts:65:7 Should navigate through product search" type="FAILURE">
+<![CDATA[  [chromium] › login.spec.ts:65:7 › AutomationExercise E-Commerce Tests › Should navigate through product search 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('input[placeholder="Search Products"]')
+
+
+      68 |     // Search for a product
+      69 |     const searchBox = page.locator('input[placeholder="Search Products"]');
+    > 70 |     await searchBox.fill("Blue");
+         |                     ^
+      71 |     await page.locator('button[id="submit_search"]').click();
+      72 |     
+      73 |     // Verify search results
+        at D:\ziliao\learn\Jenkins\Test\AutomationExercise\ui\playwright\tests\login.spec.ts:70:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\login-AutomationExercise-E-9fe3b-gate-through-product-search-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\login-AutomationExercise-E-9fe3b-gate-through-product-search-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-9fe3b-gate-through-product-search-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-9fe3b-gate-through-product-search-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AutomationExercise E-Commerce Tests › Should handle product detail page" classname="login.spec.ts" time="30.312">
+<failure message="login.spec.ts:79:7 Should handle product detail page" type="FAILURE">
+<![CDATA[  [chromium] › login.spec.ts:79:7 › AutomationExercise E-Commerce Tests › Should handle product detail page 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.single-products').first().locator('a[href*="product_details"]').first()
+
+
+      82 |     // Click on first product view
+      83 |     const firstProduct = page.locator('.single-products').first();
+    > 84 |     await firstProduct.locator('a[href*="product_details"]').first().click();
+         |                                                                      ^
+      85 |     
+      86 |     // Verify product details are visible
+      87 |     await expect(page.locator('.product-details')).toBeVisible();
+        at D:\ziliao\learn\Jenkins\Test\AutomationExercise\ui\playwright\tests\login.spec.ts:84:70
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\login-AutomationExercise-E-46090--handle-product-detail-page-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\login-AutomationExercise-E-46090--handle-product-detail-page-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-46090--handle-product-detail-page-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-46090--handle-product-detail-page-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="AutomationExercise E-Commerce Tests › Should verify product review functionality" classname="login.spec.ts" time="30.296">
+<failure message="login.spec.ts:92:7 Should verify product review functionality" type="FAILURE">
+<![CDATA[  [chromium] › login.spec.ts:92:7 › AutomationExercise E-Commerce Tests › Should verify product review functionality 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.single-products').first().locator('a[href*="product_details"]').first()
+
+
+       95 |     // Click on product
+       96 |     const firstProduct = page.locator('.single-products').first();
+    >  97 |     await firstProduct.locator('a[href*="product_details"]').first().click();
+          |                                                                      ^
+       98 |     
+       99 |     // Fill review form
+      100 |     const reviewName = page.locator('input[name="reviewer_name"]');
+        at D:\ziliao\learn\Jenkins\Test\AutomationExercise\ui\playwright\tests\login.spec.ts:97:70
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\login-AutomationExercise-E-5c27c-roduct-review-functionality-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\login-AutomationExercise-E-5c27c-roduct-review-functionality-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-5c27c-roduct-review-functionality-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|..\..\ui\playwright\test-results\login-AutomationExercise-E-5c27c-roduct-review-functionality-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

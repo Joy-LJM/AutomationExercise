@@ -1,0 +1,125 @@
+pipeline {
+    agent any
+
+    environment {
+        NODE_VERSION = '18'
+        REPORTS_DIR = 'reports'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                sh 'echo "Repository checked out successfully"'
+            }
+        }
+
+        stage('Setup') {
+            steps {
+                sh '''
+                    echo "Setting up build environment..."
+                    mkdir -p ${REPORTS_DIR}/jmeter ${REPORTS_DIR}/playwright ${REPORTS_DIR}/newman-report
+                '''
+            }
+        }
+
+        stage('JMeter Performance Tests') {
+            steps {
+                script {
+                    try {
+                        sh '''
+                            echo "Running JMeter performance tests..."
+                            chmod +x jmeter/run_jmeter.sh
+                            ./jmeter/run_jmeter.sh
+                        '''
+                    } catch (Exception e) {
+                        currentBuild.result = 'UNSTABLE'
+                        echo "JMeter tests failed or had issues: ${e.message}"
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '${REPORTS_DIR}/jmeter/**', allowEmptyArchive: true
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: '${REPORTS_DIR}/jmeter/html',
+                        reportFiles: 'index.html',
+                        reportName: 'JMeter Performance Report'
+                    ])
+                }
+            }
+        }
+
+        stage('Playwright UI Tests') {
+            steps {
+                script {
+                    try {
+                        sh '''
+                            echo "Running Playwright UI tests..."
+                            cd ui/playwright
+                            npm ci
+                            npx playwright install --with-deps chromium
+                            npm test -- --reporter=junit
+                        '''
+                    } catch (Exception e) {
+                        currentBuild.result = 'UNSTABLE'
+                        echo "Playwright tests failed or had issues: ${e.message}"
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '${REPORTS_DIR}/playwright/**', allowEmptyArchive: true
+                    junit testResults: '${REPORTS_DIR}/playwright/junit-results.xml', allowEmptyResults: true
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'ui/playwright/playwright-report',
+                        reportFiles: 'index.html',
+                        reportName: 'Playwright HTML Report'
+                    ])
+                }
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                sh '''
+                    echo "Archiving test artifacts..."
+                    if [ -d "${REPORTS_DIR}" ]; then
+                        ls -la ${REPORTS_DIR}/
+                    fi
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '${REPORTS_DIR}/**', allowEmptyArchive: true
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline execution completed"
+            sh '''
+                echo "Test execution summary:"
+                [ -f "${REPORTS_DIR}/jmeter/results.jtl" ] && echo "✓ JMeter results available" || echo "✗ No JMeter results"
+                [ -f "${REPORTS_DIR}/playwright/junit-results.xml" ] && echo "✓ Playwright results available" || echo "✗ No Playwright results"
+            '''
+        }
+        success {
+            echo "All tests passed successfully!"
+        }
+        failure {
+            echo "One or more tests failed. Check reports for details."
+        }
+        unstable {
+            echo "Tests completed with warnings. Review reports."
+        }
+    }
+}
