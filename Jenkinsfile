@@ -1,29 +1,81 @@
 pipeline {
   agent any
 
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    timeout(time: 1, unit: 'HOURS')
+    timestamps()
+  }
+
   stages {
-    stage('Run JMeter') {
+    stage('Checkout') {
       steps {
-        sh "docker compose run --rm jmeter"
+        echo 'Checking out code...'
+        checkout scm
+      }
+    }
+
+    stage('Setup') {
+      steps {
+        echo 'Setting up environment...'
+        sh 'docker compose down -v || true'
+        sh 'mkdir -p reports/jmeter reports/newman reports/playwright'
+      }
+    }
+
+    stage('Run JMeter Performance Tests') {
+      steps {
+        echo 'Running JMeter performance tests...'
+        catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+          sh 'docker compose run --rm jmeter'
+        }
       }
     }
 
     stage('Run Newman API Tests') {
       steps {
-        sh "docker compose run --rm newman"
+        echo 'Running Newman API tests...'
+        catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+          sh 'docker compose run --rm newman'
+        }
       }
     }
 
     stage('Run Playwright UI Tests') {
       steps {
-        sh "docker compose run --rm playwright"
+        echo 'Running Playwright UI tests...'
+        catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+          sh 'docker compose run --rm playwright'
+        }
       }
     }
 
     stage('Archive Reports') {
       steps {
-        archiveArtifacts artifacts: 'reports/**/*', fingerprint: true
+        echo 'Archiving test reports...'
+        archiveArtifacts artifacts: 'reports/**/*', 
+                         allowEmptyArchive: true,
+                         fingerprint: true
       }
+    }
+  }
+
+  post {
+    always {
+      echo 'Cleaning up containers...'
+      sh 'docker compose down || true'
+    }
+
+    success {
+      echo 'All tests passed!'
+    }
+
+    unstable {
+      echo 'Some tests failed or were unstable'
+    }
+
+    failure {
+      echo 'Pipeline failed!'
     }
   }
 }

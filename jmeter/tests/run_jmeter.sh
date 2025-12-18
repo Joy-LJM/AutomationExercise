@@ -3,6 +3,9 @@ set -e
 
 cd /tests
 
+# Remove old results file if it exists
+rm -f /reports/results.jtl
+
 # Run JMeter test script
 jmeter -n -t /tests/Performance_Test_Script.jmx \
   -l /reports/results.jtl \
