@@ -18,7 +18,7 @@ pipeline {
     stage('Setup') {
       steps {
         echo 'Setting up environment...'
-        sh 'docker compose down -v || true'
+        sh 'docker-compose down -v || true'
         sh 'mkdir -p reports/jmeter reports/newman reports/playwright'
       }
     }
@@ -27,7 +27,7 @@ pipeline {
       steps {
         echo 'Running JMeter performance tests...'
         catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-          sh 'docker compose run --rm jmeter'
+          sh 'docker-compose run --rm jmeter'
         }
       }
     }
@@ -36,7 +36,7 @@ pipeline {
       steps {
         echo 'Running Newman API tests...'
         catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-          sh 'docker compose run --rm newman'
+          sh 'docker-compose run --rm newman'
         }
       }
     }
@@ -45,7 +45,7 @@ pipeline {
       steps {
         echo 'Running Playwright UI tests...'
         catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-          sh 'docker compose run --rm playwright'
+          sh 'docker-compose run --rm playwright'
         }
       }
     }
@@ -63,7 +63,7 @@ pipeline {
   post {
     always {
       echo 'Cleaning up containers...'
-      sh 'docker compose down || true'
+      sh 'docker-compose down || true'
     }
 
     success {
