@@ -12,4 +12,4 @@ docker run --rm \
   -r cli,html \
   --reporter-html-export /etc/newman/reports/newman-report.html
 
-echo "âœ… Newman API tests completed"
+echo "âœ?Newman API tests completed"

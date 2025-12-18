@@ -8,7 +8,7 @@ services:
       - ./jmeter/tests:/tests
       - ./jmeter/data:/data
       - ./reports/jmeter:/reports
-    entrypoint: ["/tests/run_jmeter.sh"]
+    entrypoint: ["/bin/bash", "-c", "chmod +x /tests/run_jmeter.sh && /tests/run_jmeter.sh"]
 
   newman:
     image: postman/newman:alpine
@@ -35,7 +35,7 @@ services:
     volumes:
       - ./ui/playwright:/tests
       - ./reports/playwright-report:/report
-    entrypoint: ["/tests/tests/run_playwright.sh"]
+    entrypoint: ["/bin/bash", "-c", "chmod +x /tests/tests/run_playwright.sh && /tests/tests/run_playwright.sh"]
 
   jenkins:
     build:
@@ -48,6 +48,7 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+    user: "root"
 
 volumes:
   jenkins_home:
