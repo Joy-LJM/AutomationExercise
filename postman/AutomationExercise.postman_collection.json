@@ -36,14 +36,14 @@
       ]
     },
     {
-      "name": "Get Product Details",
+      "name": "Get all brands list",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/productDetails/{{product_id}}",
+          "raw": "{{baseUrl}}/brandsList",
           "host": ["{{baseUrl}}"],
-          "path": ["productDetails", "{{product_id}}"]
+          "path": ["brandsList"]
         }
       },
       "event": [
@@ -55,9 +55,9 @@
               "    pm.response.to.have.status(200);",
               "});",
               "",
-              "pm.test(\"Product details contain correct ID\", function() {",
+              "pm.test(\"Brand list contain brand name\", function() {",
               "    const json = pm.response.json();",
-              "    pm.expect(json.products[0].id).to.eql(parseInt(pm.environment.get(\"product_id\")));",
+              "    pm.expect(json.brands.length).to.be.above(0);",
               "});"
             ],
             "type": "text/javascript"
