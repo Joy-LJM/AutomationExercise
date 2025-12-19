@@ -2,14 +2,14 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Install Docker CLI, Git, and dependencies
+# Update package list and install dependencies
 RUN apt-get update && apt-get install -y \
   docker.io \
   git \
   wget \
   tar \
-  openjdk-17-jdk \
   curl \
+  default-jdk \
   && apt-get clean
 
 # Install Docker Compose
