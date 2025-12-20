@@ -50,6 +50,16 @@ pipeline {
       }
     }
 
+    stage('Debug') {
+      steps {
+        echo 'Debugging environment...'
+        sh 'echo WORKSPACE=$WORKSPACE'
+        sh 'ls -l $WORKSPACE/jmeter/tests'
+        sh 'ls -l $WORKSPACE/postman'
+        sh 'ls -l $WORKSPACE/ui/playwright/tests'
+      }
+    }
+
     stage('Archive Reports') {
       steps {
         echo 'Archiving test reports...'
