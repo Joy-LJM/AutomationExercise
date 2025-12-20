@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   jmeter:
     image: justb4/jmeter:latest
@@ -35,8 +33,9 @@ services:
     container_name: playwright-runner
     volumes:
       - ${WORKSPACE:-.}/ui/playwright:/tests
-      - ${WORKSPACE:-.}/reports/playwright-report:/report
-    entrypoint: ["/bin/bash", "-c", "chmod +x /tests/tests/run_playwright.sh && /tests/tests/run_playwright.sh"]
+      - ${WORKSPACE:-.}/reports/playwright:/tests/playwright-report
+    working_dir: /tests
+    entrypoint: ["/bin/bash", "-c", "chmod +x ./run_playwright.sh && ./run_playwright.sh"]
 
   jenkins:
     build:
