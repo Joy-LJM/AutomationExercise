@@ -32,8 +32,8 @@ services:
     image: mcr.microsoft.com/playwright:v1.45.0-jammy
     container_name: playwright-runner
     volumes:
-      - ${WORKSPACE:-.}/ui/playwright:/tests
-      - ${WORKSPACE:-.}/reports/playwright:/tests/playwright-report
+      - ${WORKSPACE:-.}/ui/playwright/tests:/tests
+      - ${WORKSPACE:-.}/reports/playwright:/report
     working_dir: /tests
     entrypoint: ["/bin/bash", "-c", "chmod +x ./run_playwright.sh && ./run_playwright.sh"]
 
