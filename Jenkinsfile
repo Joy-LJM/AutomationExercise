@@ -27,7 +27,7 @@ pipeline {
       steps {
         echo 'Running JMeter performance tests...'
         catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-          sh 'docker-compose --env-file <(echo WORKSPACE=$WORKSPACE) run --rm jmeter'
+          sh 'bash -c "docker-compose --env-file <(echo WORKSPACE=$WORKSPACE) run --rm jmeter"'
         }
       }
     }
@@ -36,7 +36,7 @@ pipeline {
       steps {
         echo 'Running Newman API tests...'
         catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-          sh 'docker-compose --env-file <(echo WORKSPACE=$WORKSPACE) run --rm newman'
+          sh 'bash -c "docker-compose --env-file <(echo WORKSPACE=$WORKSPACE) run --rm newman"'
         }
       }
     }
@@ -45,7 +45,7 @@ pipeline {
       steps {
         echo 'Running Playwright UI tests...'
         catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-          sh 'docker-compose --env-file <(echo WORKSPACE=$WORKSPACE) run --rm playwright'
+          sh 'bash -c "docker-compose --env-file <(echo WORKSPACE=$WORKSPACE) run --rm playwright"'
         }
       }
     }
