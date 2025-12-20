@@ -3,17 +3,17 @@ services:
     image: justb4/jmeter:latest
     container_name: jmeter-runner
     volumes:
-      - ${WORKSPACE:-.}/jmeter/tests:/tests
-      - ${WORKSPACE:-.}/jmeter/data:/data
-      - ${WORKSPACE:-.}/reports/jmeter:/reports
+      - ${WORKSPACE}/jmeter/tests:/tests
+      - ${WORKSPACE}/jmeter/data:/data
+      - ${WORKSPACE}/reports/jmeter:/reports
     entrypoint: ["/bin/bash", "-c", "chmod +x /tests/run_jmeter.sh && /tests/run_jmeter.sh"]
 
   newman:
     image: postman/newman:alpine
     container_name: newman_runner
     volumes:
-      - ${WORKSPACE:-.}/postman:/etc/newman
-      - ${WORKSPACE:-.}/reports/newman:/etc/newman/reports
+      - ${WORKSPACE}/postman:/etc/newman
+      - ${WORKSPACE}/reports/newman:/etc/newman/reports
     working_dir: /etc/newman
     entrypoint: ["newman"]
     command:
@@ -32,8 +32,8 @@ services:
     image: mcr.microsoft.com/playwright:v1.45.0-jammy
     container_name: playwright-runner
     volumes:
-      - ${WORKSPACE:-.}/ui/playwright/tests:/tests
-      - ${WORKSPACE:-.}/reports/playwright:/report
+      - ${WORKSPACE}/ui/playwright/tests:/tests
+      - ${WORKSPACE}/reports/playwright:/report
     working_dir: /tests
     entrypoint: ["/bin/bash", "-c", "chmod +x ./run_playwright.sh && ./run_playwright.sh"]
 
